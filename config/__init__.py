@@ -1,0 +1,10 @@
+#!/usr/bin/venv python
+# -*- coding: utf-8 -*-
+"""
+@Time  : 2026/5/28 15:57
+@Author : wwj
+@File : __init__.py.py
+"""
+
+from .config import Config
+__all__ = ["Config"]
