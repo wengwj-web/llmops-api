@@ -61,7 +61,7 @@ class RAGFusionRetriever(MultiQueryRetriever):
     k: int = 4
 
     def retrieve_documents(
-            self, queries: List[str], run_manager: CallbackManagerForRetrieverRun
+        self, queries: List[str], run_manager: CallbackManagerForRetrieverRun
     ) -> List[List]:
         """重写检索文档函数，返回值变成一个嵌套的列表"""
         documents = []
