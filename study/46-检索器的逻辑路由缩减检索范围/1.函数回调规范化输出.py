@@ -5,10 +5,11 @@
 @Author  : thezehui@gmail.com
 @File    : 1.函数回调规范化输出.py
 """
+
 from typing import Literal
 
 import dotenv
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 
 dotenv.load_dotenv()
@@ -16,13 +17,17 @@ dotenv.load_dotenv()
 
 class RouteQuery(BaseModel):
     """将用户查询映射到对应的数据源上"""
+
     datasource: Literal["python_docs", "js_docs", "golang_docs"] = Field(
         description="根据用户的问题，选择哪个数据源最相关以回答用户的问题"
     )
 
 
 # 1.创建绑定结构化输出的大语言模型
-llm = ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0)
+llm = ChatOpenAI(
+    model="qwen2.5:1.5b",
+    temperature=0.8,
+)
 structured_llm = llm.with_structured_output(RouteQuery)
 
 # 2.构建一个问题

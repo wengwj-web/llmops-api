@@ -5,15 +5,19 @@
 @Author  : thezehui@gmail.com
 @File    : 1.父文档检索器示例.py
 """
+
 import dotenv
 import weaviate
-from langchain.retrievers import ParentDocumentRetriever
-from langchain.storage import LocalFileStore
+from langchain_classic.retrievers.parent_document_retriever import (
+    ParentDocumentRetriever,
+)  # ← 修改
+from langchain_classic.storage import LocalFileStore
 from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_ollama import OllamaEmbeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_weaviate import WeaviateVectorStore
-from weaviate.auth import AuthApiKey
+from weaviate.auth import AuthApiKey, Auth
 
 dotenv.load_dotenv()
 
@@ -32,13 +36,17 @@ child_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50
 
 # 3.创建向量数据库与文档数据库
 vector_store = WeaviateVectorStore(
-    client=weaviate.connect_to_wcs(
-        cluster_url="https://mbakeruerziae6psyex7ng.c0.us-west3.gcp.weaviate.cloud",
-        auth_credentials=AuthApiKey("ZltPVa9ZSOxUcfafelsggGyyH6tnTYQYJvBx"),
+    client=weaviate.connect_to_weaviate_cloud(
+        cluster_url="jq8u4jgdr7ojtxennje8fq.c0.eu-central-1.aws.weaviate.cloud",
+        auth_credentials=Auth.api_key(
+            "REh2WUpNM091aEhSQkhwRV9uU3hJT1p2MFYzWlhsM3BrWUpnemxCbXRVMEVVaVZlb1d2eXhUajZUU0kwPV92MjAw"
+        ),
     ),
     index_name="ParentDocument",
     text_key="text",
-    embedding=OpenAIEmbeddings(model="text-embedding-3-small"),
+    embedding=OllamaEmbeddings(
+        model="nomic-embed-text", base_url="http://localhost:11434"
+    ),
 )
 store = LocalFileStore("./parent-document")
 

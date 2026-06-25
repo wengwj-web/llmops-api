@@ -5,18 +5,21 @@
 @Author  : thezehui@gmail.com
 @File    : 1.多向量索引-摘要检索原文档.py
 """
+
 import uuid
 
 import dotenv
-from langchain.retrievers import MultiVectorRetriever
-from langchain.storage import LocalFileStore
-from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_classic.retrievers import MultiVectorRetriever
+from langchain_classic.storage import LocalFileStore
+from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_ollama import OllamaEmbeddings
+from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import UnstructuredFileLoader
 
 dotenv.load_dotenv()
 
@@ -29,7 +32,7 @@ docs = loader.load_and_split(text_splitter)
 summary_chain = (
         {"doc": lambda x: x.page_content}
         | ChatPromptTemplate.from_template("请总结以下文档的内容：\n\n{doc}")
-        | ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0)
+        | ChatOpenAI(model="qwen2.5:1.5b", temperature=0.7)
         | StrOutputParser()
 )
 
@@ -47,7 +50,9 @@ summary_docs = [
 byte_store = LocalFileStore("./multy-vector")
 db = FAISS.from_documents(
     summary_docs,
-    embedding=OpenAIEmbeddings(model="text-embedding-3-small"),
+    embedding=OllamaEmbeddings(
+        model="nomic-embed-text", base_url="http://localhost:11434"
+    ),
 )
 
 # 6.构建多向量检索器

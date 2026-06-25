@@ -5,12 +5,13 @@
 @Author  : thezehui@gmail.com
 @File    : 10.自查询检索器实现元数据过滤.py
 """
+
 import dotenv
-from langchain.chains.query_constructor.schema import AttributeInfo
-from langchain.retrievers import SelfQueryRetriever
+from langchain_classic.chains.query_constructor.schema import AttributeInfo
+from langchain_classic.retrievers.self_query.base import SelfQueryRetriever
 from langchain_core.documents import Document
+from langchain_ollama import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
 dotenv.load_dotenv()
@@ -60,9 +61,11 @@ documents = [
 ]
 db = PineconeVectorStore(
     index_name="llmops",
-    embedding=OpenAIEmbeddings(model="text-embedding-3-small"),
+    embedding=OllamaEmbeddings(
+        model="nomic-embed-text", base_url="http://localhost:11434"
+    ),
     namespace="dataset",
-    text_key="text"
+    text_key="text",
 )
 retriever = db.as_retriever()
 # db.add_documents(documents)
@@ -76,7 +79,7 @@ metadata_filed_info = [
 
 # 3.创建自查询检索
 self_query_retriever = SelfQueryRetriever.from_llm(
-    llm=ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0),
+    llm=ChatOpenAI(model="qwen2.5:1.5b", temperature=0.8),
     vectorstore=db,
     document_contents="电影的名字",
     metadata_field_info=metadata_filed_info,

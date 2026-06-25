@@ -5,11 +5,12 @@
 @Author  : thezehui@gmail.com
 @File    : 8.基于逻辑和语义的路由分发.py
 """
+
 from typing import Literal
 
 import dotenv
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI
 
@@ -18,6 +19,7 @@ dotenv.load_dotenv()
 
 class RouteQuery(BaseModel):
     """将用户查询映射到最相关的数据源"""
+
     datasource: Literal["python_docs", "js_docs", "golang_docs"] = Field(
         description="根据给定用户问题，选择哪个数据源最相关以回答他们的问题"
     )
@@ -34,14 +36,22 @@ def choose_route(result: RouteQuery) -> str:
 
 
 # 1.构建大语言模型并进行结构化输出
-llm = ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0)
+llm = ChatOpenAI(
+    model="qwen2.5:1.5b",
+    temperature=0.8,
+)
 structured_llm = llm.with_structured_output(RouteQuery)
 
 # 2.创建路由逻辑链
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "你是一个擅长将用户问题路由到适当的数据源的专家。\n请根据问题涉及的编程语言，将其路由到相关数据源"),
-    ("human", "{question}")
-])
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "你是一个擅长将用户问题路由到适当的数据源的专家。\n请根据问题涉及的编程语言，将其路由到相关数据源",
+        ),
+        ("human", "{question}"),
+    ]
+)
 router = {"question": RunnablePassthrough()} | prompt | structured_llm | choose_route
 
 # 3.执行相应的提问，检查映射的路由

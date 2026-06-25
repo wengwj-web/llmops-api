@@ -32,7 +32,7 @@ class HyDERetriever(BaseRetriever):
     llm: BaseLanguageModel
 
     def _get_relevant_documents(
-            self, query: str, *, run_manager: CallbackManagerForRetrieverRun
+        self, query: str, *, run_manager: CallbackManagerForRetrieverRun
     ) -> List[Document]:
         """传递检索query实现HyDE混合策略检索"""
         # 1.构建生成假设性文档的prompt
@@ -42,11 +42,11 @@ class HyDERetriever(BaseRetriever):
 
         # 2.构建HyDE混合策略检索链
         chain = (
-                {"question": RunnablePassthrough()}
-                | prompt
-                | self.llm
-                | StrOutputParser()
-                | self.retriever
+            {"question": RunnablePassthrough()}
+            | prompt
+            | self.llm
+            | StrOutputParser()
+            | self.retriever
         )
 
         return chain.invoke(query)
