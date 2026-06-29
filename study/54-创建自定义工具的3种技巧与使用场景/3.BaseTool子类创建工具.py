@@ -20,8 +20,8 @@ class MultiplyInput(BaseModel):
 class MultiplyTool(BaseTool):
     """乘法计算工具"""
 
-    name = "multiply_tool"
-    description = "将传递的两个数字相乘后返回"
+    name: str = "multiply_tool"
+    description: str = "将传递的两个数字相乘后返回"
     args_schema: Type[BaseModel] = MultiplyInput
 
     def _run(self, *args: Any, **kwargs: Any) -> Any:
