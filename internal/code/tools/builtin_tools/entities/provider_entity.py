@@ -24,6 +24,7 @@ class ProviderEntity(BaseModel):
     icon: str
     background: str
     category: str
+    created_at: int = 0
 
 
 class Provider(BaseModel):
@@ -31,7 +32,7 @@ class Provider(BaseModel):
 
     name: str
     position: str
-    providers_entity: ProviderEntity
+    provider_entity: ProviderEntity
     tool_entity_map: dict[str, Any] = Field(default_factory=dict)
     tool_func_map: dict[str, Any] = Field(default_factory=dict)
 
@@ -48,7 +49,7 @@ class Provider(BaseModel):
     def get_tool_entity(self, tool_name: str) -> Any:
         return self.tool_entity_map[tool_name]
 
-    def get_tool_entites(self) -> list[Any]:
+    def get_tool_entities(self) -> list[Any]:
         return list(self.tool_entity_map.values())
 
     def _provider_init(self):

@@ -19,7 +19,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda, Runnab
 from langchain_core.tracers import Run
 from langchain_openai import ChatOpenAI
 
-from internal.code.tools.builtin_tools.providers import ProviderFactory
+from internal.code.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
@@ -34,7 +34,6 @@ class AppHandler:
     """应用控制器"""
 
     app_service: AppService
-    provider_factory: ProviderFactory
 
     def create_app(self):
         app = self.app_service.create_app()
@@ -153,7 +152,5 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        providers = self.provider_factory.get_provider_entites()
-        return success_json({"providers": [provider.dict() for provider in providers]})
         # raise FailException("数据未找到异常")
-        # return {"ping":"pong"}
+        return {"ping": "pong"}
