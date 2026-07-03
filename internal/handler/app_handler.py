@@ -12,6 +12,8 @@ from operator import itemgetter
 from typing import Dict, Any
 
 from injector import inject
+from langchain_classic.memory import ConversationBufferWindowMemory
+from langchain_classic.schema import BaseMemory
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -19,13 +21,9 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda, Runnab
 from langchain_core.tracers import Run
 from langchain_openai import ChatOpenAI
 
-from internal.code.tools.builtin_tools.providers import BuiltinProviderManager
-from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
-from pkg.response import success_json, validation_error_json, success_message
-from langchain_classic.memory import ConversationBufferWindowMemory
-from langchain_classic.schema import BaseMemory
+from pkg.response import success_json, validate_error_json, success_message
 
 
 @inject
@@ -81,7 +79,7 @@ class AppHandler:
         # 1. 提取从接口中获取的输入，post
         req = CompletionReq()
         if not req.validate():
-            return validation_error_json(req.errors)
+            return validate_error_json(req.errors)
 
         prompt = ChatPromptTemplate.from_messages(
             [

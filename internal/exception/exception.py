@@ -5,6 +5,7 @@
 @Author : wwj
 @File : exception.py
 """
+
 from dataclasses import field
 from typing import Any
 
@@ -13,26 +14,36 @@ from pkg.response import HttpCode
 
 class CustomException(Exception):
     """基础自定义异常信息"""
+
     code: HttpCode = HttpCode.FAIL
     message: str = ""
     data: Any = field(default_factory=dict)
-    def __init__(self,message:str="",data:Any=None):
+
+    def __init__(self, message: str = "", data: Any = None):
         super().__init__()
         self.message = message
         self.data = data
 
+
 class FailException(CustomException):
     """通用自定义异常"""
+
     pass
 
+
 class NotFoundException(CustomException):
-    code: HttpCode.NOT_FOUND
+    code: HttpCode = HttpCode.NOT_FOUND
+
 
 class UnauthorizedException(CustomException):
-    code: HttpCode.UNAUTHORIZED
+    code: HttpCode = HttpCode.UNAUTHORIZED
+
 
 class ForbiddenException(CustomException):
-    code: HttpCode.FORBIDDEN
+    code: HttpCode = HttpCode.FORBIDDEN
 
-class ValidationException(CustomException):
-    code: HttpCode.VALIDATION_ERROR
+
+class ValidateErrorException(CustomException):
+    """数据验证异常"""
+
+    code: HttpCode = HttpCode.VALIDATION_ERROR

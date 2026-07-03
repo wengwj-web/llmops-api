@@ -8,6 +8,12 @@
 
 from .app_handler import AppHandler
 from .builtin_tool_handler import BuiltinToolHandler
+from .api_tool_handler import ApiToolHandler
 from .conversationBufferWindowMemory import ConversationBufferWindowMemory
 
-__all__ = ["AppHandler", "BuiltinToolHandler", "ConversationBufferWindowMemory"]
+__all__ = [
+    "AppHandler",
+    "BuiltinToolHandler",
+    "ApiToolHandler",
+    "ConversationBufferWindowMemory",
+]
