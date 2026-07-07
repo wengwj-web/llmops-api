@@ -17,13 +17,13 @@ from internal.schema.api_tool_schema import (
     CreateApiToolReq,
     GetApiToolProviderResp,
     GetApiToolResp,
-    # GetApiToolProvidersWithPageReq,
-    # GetApiToolProvidersWithPageResp,
-    # UpdateApiToolProviderReq,
+    GetApiToolProvidersWithPageReq,
+    GetApiToolProvidersWithPageResp,
+    UpdateApiToolProviderReq,
 )
 from internal.service import ApiToolService
 
-# from pkg.paginator import PageModel
+from pkg.paginator import PageModel
 from pkg.response import validate_error_json, success_message, success_json
 
 
@@ -34,19 +34,23 @@ class ApiToolHandler:
 
     api_tool_service: ApiToolService
 
-    # def get_api_tool_providers_with_page(self):
-    #     """获取API工具提供者列表信息，该接口支持分页"""
-    #     req = GetApiToolProvidersWithPageReq(request.args)
-    #     if not req.validate():
-    #         return validate_error_json(req.errors)
-    #
-    #     api_tool_providers, paginator = self.api_tool_service.get_api_tool_providers_with_page(req)
-    #
-    #     resp = GetApiToolProvidersWithPageResp(many=True)
-    #
-    #     return success_json(PageModel(list=resp.dump(api_tool_providers), paginator=paginator))
-    #
-    def create_api_tool(self):
+    def get_api_tool_providers_with_page(self):
+        """获取API工具提供者列表信息，该接口支持分页"""
+        req = GetApiToolProvidersWithPageReq(request.args)
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        api_tool_providers, paginator = (
+            self.api_tool_service.get_api_tool_providers_with_page(req)
+        )
+
+        resp = GetApiToolProvidersWithPageResp(many=True)
+
+        return success_json(
+            PageModel(list=resp.dump(api_tool_providers), paginator=paginator)
+        )
+
+    def create_api_tool_provider(self):
         """创建自定义API工具"""
         req = CreateApiToolReq()
         if not req.validate():
@@ -56,15 +60,15 @@ class ApiToolHandler:
 
         return success_message("创建自定义API插件成功")
 
-    # def update_api_tool_provider(self, provider_id: UUID):
-    #     """更新自定义API工具提供者信息"""
-    #     req = UpdateApiToolProviderReq()
-    #     if not req.validate():
-    #         return validate_error_json(req.errors)
-    #
-    #     self.api_tool_service.update_api_tool_provider(provider_id, req)
-    #
-    #     return success_message("更新自定义API插件成功")
+    def update_api_tool_provider(self, provider_id: UUID):
+        """更新自定义API工具提供者信息"""
+        req = UpdateApiToolProviderReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        self.api_tool_service.update_api_tool_provider(provider_id, req)
+
+        return success_message("更新自定义API插件成功")
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
         """根据传递的provider_id+tool_name获取工具的详情信息"""
