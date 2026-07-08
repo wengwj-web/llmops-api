@@ -144,7 +144,11 @@ class BuiltinToolService:
                         "name": field_name,
                         "description": model_field.description or "",
                         "required": model_field.is_required(),
-                        "type": str(model_field.annotation),
+                        "type": getattr(
+                            model_field.annotation,
+                            "__name__",
+                            str(model_field.annotation),
+                        ),
                     }
                 )
         return inputs

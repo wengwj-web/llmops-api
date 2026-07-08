@@ -15,7 +15,6 @@ from injector import inject
 from sqlalchemy import desc
 
 from internal.code.tools.api_tools.entities import OpenAPISchema
-from internal.code.tools.api_tools.providers import ApiProviderManager
 from internal.exception import (
     ValidateErrorException,
     NotFoundException,
@@ -32,6 +31,7 @@ from pkg.paginator import Paginator
 from pkg.sqlalchemy import SQLAlchemy
 
 from .base_service import BaseService
+from internal.code.tools.api_tools.providers import ApiProviderManager
 
 
 @inject
@@ -44,7 +44,7 @@ class ApiToolService(BaseService):
     api_provider_manager: ApiProviderManager
 
     def update_api_tool_provider(
-            self, provider_id: UUID, req: UpdateApiToolProviderReq
+        self, provider_id: UUID, req: UpdateApiToolProviderReq
     ):
         """根据传递的provider_id+req更新对应的API工具提供者信息"""
         # todo:等待授权认证模块完成进行切换调整
@@ -108,7 +108,7 @@ class ApiToolService(BaseService):
                 )
 
     def get_api_tool_providers_with_page(
-            self, req: GetApiToolProvidersWithPageReq
+        self, req: GetApiToolProvidersWithPageReq
     ) -> tuple[list[Any], Paginator]:
         """获取自定义API工具服务提供者分页列表数据"""
         # todo:等待授权认证模块完成进行切换调整
@@ -242,31 +242,31 @@ class ApiToolService(BaseService):
 
         return OpenAPISchema(**data)
 
-    # def api_tool_invoke(self):
-    #     provider_id = "d72bb9d7-8794-4caf-bd60-1f992c537065"
-    #     tool_name = "YoudaoSuggest"
-    #
-    #     api_tool = (
-    #         self.db.session.query(ApiTool)
-    #         .filter(
-    #             ApiTool.provider_id == provider_id,
-    #             ApiTool.name == tool_name,
-    #         )
-    #         .one_or_none()
-    #     )
-    #     api_tool_provider = api_tool.provider
-    #
-    #     from internal.code.tools.api_tools.entities import ToolEntity
-    #
-    #     tool = self.api_provider_manager.get_tool(
-    #         ToolEntity(
-    #             id=provider_id,
-    #             name=tool_name,
-    #             url=api_tool.url,
-    #             method=api_tool.method,
-    #             description=api_tool.description,
-    #             headers=api_tool_provider.headers,
-    #             parameters=api_tool.parameters,
-    #         )
-    #     )
-    #     return tool.invoke({"q": "love", "doctype": "json"})
+    def api_tool_invoke(self):
+        provider_id = "39ec7d77-901e-4c8b-8247-f58d720e98a9"
+        tool_name = "GetCurrentWeather"
+
+        api_tool = (
+            self.db.session.query(ApiTool)
+            .filter(
+                ApiTool.provider_id == provider_id,
+                ApiTool.name == tool_name,
+            )
+            .one_or_none()
+        )
+        api_tool_provider = api_tool.provider
+
+        from internal.code.tools.api_tools.entities import ToolEntity
+
+        tool = self.api_provider_manager.get_tool(
+            ToolEntity(
+                id=provider_id,
+                name=tool_name,
+                url=api_tool.url,
+                method=api_tool.method,
+                description=api_tool.description,
+                headers=api_tool_provider.headers,
+                parameters=api_tool.parameters,
+            )
+        )
+        return tool.invoke({"q": "love", "doctype": "json"})
