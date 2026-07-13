@@ -243,7 +243,7 @@ class ApiToolService(BaseService):
         return OpenAPISchema(**data)
 
     def api_tool_invoke(self):
-        provider_id = "39ec7d77-901e-4c8b-8247-f58d720e98a9"
+        provider_id = "bd8ad2b0-7ab6-4869-acf1-25a2ab8aa115"
         tool_name = "GetCurrentWeather"
 
         api_tool = (

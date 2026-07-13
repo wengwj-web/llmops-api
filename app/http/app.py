@@ -17,15 +17,25 @@ from config import Config
 from internal.router import Router
 from internal.server import Http
 
-#将env文件加载到变量中
+# 将env文件加载到变量中
 dotenv.load_dotenv()
 
 conf = Config()
 
 injector = Injector([ExtensionModule])
 
-app = Http(__name__, conf=conf,db=injector.get(SQLAlchemy), migrate=injector.get(Migrate), router=injector.get(Router))
-app.config['SECRET_KEY'] = "2ef7c6e2b6ab1d235989c2cb9096508b2a908ef9318456500ffe167e7a3e7acb"
+app = Http(
+    __name__,
+    conf=conf,
+    db=injector.get(SQLAlchemy),
+    migrate=injector.get(Migrate),
+    router=injector.get(Router),
+)
+app.config["SECRET_KEY"] = (
+    "2ef7c6e2b6ab1d235989c2cb9096508b2a908ef9318456500ffe167e7a3e7acb"
+)
+
+celery = app.extensions["celery"]
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -6,6 +6,7 @@
 @File : http.py
 """
 
+import logging
 import os
 from logging import debug
 
@@ -15,6 +16,7 @@ from flask_migrate import Migrate
 
 from config import Config
 from internal.exception import CustomException
+from internal.extension import logging_extension, redis_extension, celery_extension
 from internal.router import Router
 from pkg.response import json, Response, HttpCode
 from pkg.sqlalchemy import SQLAlchemy
@@ -44,6 +46,9 @@ class Http(Flask):
         # 4.初始化flask扩展
         db.init_app(self)
         migrate.init_app(self, db, directory="internal/migration")
+        redis_extension.init_app(self)
+        celery_extension.init_app(self)
+        logging_extension.init_app(self)
 
         # 5.解决前后端跨域问题
         CORS(
@@ -65,6 +70,7 @@ class Http(Flask):
         router.register_router(self)
 
     def _register_error_handler(self, error: Exception):
+        logging.error("An error occurred: %s", error, exc_info=True)
         if isinstance(error, CustomException):
             return json(
                 Response(

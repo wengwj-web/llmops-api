@@ -25,6 +25,7 @@ from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_json, validate_error_json, success_message
 from internal.service import ApiToolService
+from internal.task.demo_task import demo_task
 
 
 @inject
@@ -53,13 +54,13 @@ class AppHandler:
 
     @classmethod
     def _load_memory_variables(
-            cls, input: Dict[str, Any], config: RunnableConfig
+        cls, input: Dict[str, Any], config: RunnableConfig
     ) -> Dict[str, Any]:
         """加载记忆变量信息"""
         configurable = config.get("configurable", {})
         configurable_memory = configurable.get("memory", None)
         if configurable_memory is not None and isinstance(
-                configurable_memory, BaseMemory
+            configurable_memory, BaseMemory
         ):
             return configurable_memory.load_memory_variables(input)
 
@@ -71,7 +72,7 @@ class AppHandler:
         configurable = config.get("configurable", {})
         configurable_memory = configurable.get("memory", None)
         if configurable_memory is not None and isinstance(
-                configurable_memory, BaseMemory
+            configurable_memory, BaseMemory
         ):
             configurable_memory.save_context(run_obj.inputs, run_obj.outputs)
 
@@ -99,20 +100,15 @@ class AppHandler:
             chat_memory=FileChatMessageHistory("./storage/memory/chat_history.txt"),
         )
 
-        llm = ChatOpenAI(
-            model="qwen2.5:1.5b",
-            openai_api_base="http://localhost:11434/v1",
-            openai_api_key="ollama",
-            temperature=0.7,
-        )
+        llm = ChatOpenAI(model="qwen2.5:1.5b", temperature=0.7)
         chain = (
-                RunnablePassthrough.assign(
-                    history=RunnableLambda(self._load_memory_variables)
-                            | itemgetter("history"),
-                )
-                | prompt
-                | llm
-                | StrOutputParser()
+            RunnablePassthrough.assign(
+                history=RunnableLambda(self._load_memory_variables)
+                | itemgetter("history"),
+            )
+            | prompt
+            | llm
+            | StrOutputParser()
         ).with_listeners(on_end=self._save_context)
 
         chain_input = {"query": req.query.data}
@@ -152,6 +148,7 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        return self.api_tool_service.api_tool_invoke()
+        demo_task.delay(uuid.uuid4())
+        # return self.api_tool_service.api_tool_invoke()
         # raise FailException("数据未找到异常")
-        # return {"ping": "pong"}
+        return {"ping": "pong"}
