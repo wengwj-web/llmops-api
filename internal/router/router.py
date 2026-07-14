@@ -16,6 +16,7 @@ from internal.handler import (
     BuiltinToolHandler,
     ApiToolHandler,
     UploadFileHandler,
+    DatasetHandler,
 )
 
 
@@ -28,6 +29,7 @@ class Router:
     build_tool_handler: BuiltinToolHandler
     api_tool_handler: ApiToolHandler
     upload_file_handler: UploadFileHandler
+    dateset_handle: DatasetHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -111,6 +113,33 @@ class Router:
             "/upload-files/image",
             methods=["POST"],
             view_func=self.upload_file_handler.upload_image,
+        )
+
+        bp.add_url_rule(
+            "/datasets/",
+            view_func=self.dateset_handle.get_datasets_with_page,
+        )
+
+        bp.add_url_rule(
+            "/datasets/",
+            methods=["POST"],
+            view_func=self.dateset_handle.create_dataset,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>",
+            view_func=self.dateset_handle.get_dataset,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>",
+            methods=["POST"],
+            view_func=self.dateset_handle.update_dataset,
+        )
+
+        bp.add_url_rule(
+            "/datasets/embeddings",
+            view_func=self.dateset_handle.embeddings_query,
         )
 
         # 3.在应用上注册蓝图

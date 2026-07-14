@@ -12,8 +12,8 @@ from operator import itemgetter
 from typing import Dict, Any
 
 from injector import inject
-from langchain_classic.memory import ConversationBufferWindowMemory
-from langchain_classic.schema import BaseMemory
+from langchain.memory import ConversationBufferWindowMemory
+from langchain.schema import BaseMemory
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -24,7 +24,7 @@ from langchain_openai import ChatOpenAI
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_json, validate_error_json, success_message
-from internal.service import ApiToolService
+from internal.service import ApiToolService, VectorDatabaseService
 from internal.task.demo_task import demo_task
 
 
@@ -35,6 +35,7 @@ class AppHandler:
 
     app_service: AppService
     api_tool_service: ApiToolService
+    vector_database_service: VectorDatabaseService
 
     def create_app(self):
         app = self.app_service.create_app()
@@ -101,10 +102,15 @@ class AppHandler:
         )
 
         llm = ChatOpenAI(model="qwen2.5:1.5b", temperature=0.7)
+        retriever = (
+            self.vector_database_service.get_retriever()
+            | self.vector_database_service.combine_documents
+        )
         chain = (
             RunnablePassthrough.assign(
                 history=RunnableLambda(self._load_memory_variables)
                 | itemgetter("history"),
+                context=itemgetter("query") | retriever,
             )
             | prompt
             | llm

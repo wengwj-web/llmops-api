@@ -12,12 +12,21 @@ from .api_tool_service import ApiToolService
 from .base_service import BaseService
 from .cos_service import CosService
 from .upload_file_service import UploadFileService
+from .dataset_service import DatasetService
+
+from .embeddings_service import EmbeddingsService
+from .jieba_service import JiebaService
+from .vector_database_service import VectorDatabaseService
 
 __all__ = [
+    "BaseService",
     "AppService",
+    "VectorDatabaseService",
     "BuiltinToolService",
     "ApiToolService",
-    "BaseService",
     "CosService",
     "UploadFileService",
+    "DatasetService",
+    "EmbeddingsService",
+    "JiebaService",
 ]
