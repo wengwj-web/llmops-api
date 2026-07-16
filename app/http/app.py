@@ -10,9 +10,8 @@ import dotenv
 from flask_migrate import Migrate
 
 from pkg.sqlalchemy import SQLAlchemy
-from injector import Injector
 
-from .module import ExtensionModule
+from .module import ExtensionModule, Injector
 from config import Config
 from internal.router import Router
 from internal.server import Http

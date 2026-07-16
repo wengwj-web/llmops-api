@@ -17,6 +17,7 @@ from internal.handler import (
     ApiToolHandler,
     UploadFileHandler,
     DatasetHandler,
+    DocumentHandler,
 )
 
 
@@ -29,7 +30,8 @@ class Router:
     build_tool_handler: BuiltinToolHandler
     api_tool_handler: ApiToolHandler
     upload_file_handler: UploadFileHandler
-    dateset_handle: DatasetHandler
+    dateset_handler: DatasetHandler
+    document_handler: DocumentHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -117,29 +119,46 @@ class Router:
 
         bp.add_url_rule(
             "/datasets/",
-            view_func=self.dateset_handle.get_datasets_with_page,
+            view_func=self.dateset_handler.get_datasets_with_page,
         )
 
         bp.add_url_rule(
             "/datasets/",
             methods=["POST"],
-            view_func=self.dateset_handle.create_dataset,
+            view_func=self.dateset_handler.create_dataset,
         )
 
         bp.add_url_rule(
             "/datasets/<uuid:dataset_id>",
-            view_func=self.dateset_handle.get_dataset,
+            view_func=self.dateset_handler.get_dataset,
         )
 
         bp.add_url_rule(
             "/datasets/<uuid:dataset_id>",
             methods=["POST"],
-            view_func=self.dateset_handle.update_dataset,
+            view_func=self.dateset_handler.update_dataset,
         )
 
         bp.add_url_rule(
             "/datasets/embeddings",
-            view_func=self.dateset_handle.embeddings_query,
+            view_func=self.dateset_handler.embeddings_query,
+        )
+
+        bp.add_url_rule(
+            "/datasets/embeddings",
+            view_func=self.dateset_handler.embeddings_query,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents",
+            methods=["POST"],
+            view_func=self.document_handler.create_documents,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/hit",
+            methods=["POST"],
+            view_func=self.dateset_handler.hit,
         )
 
         # 3.在应用上注册蓝图
