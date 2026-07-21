@@ -20,6 +20,8 @@ langchain-ollama==0.1.0
 langchain-openai==0.1.25
 langchain-text-splitters==0.2.4
 langchain-weaviate==0.0.2
+langgraph==0.2.8
+langgraph-checkpoint==1.0.3
 
 marshmallow==3.26.2
 numpy==1.26.4
