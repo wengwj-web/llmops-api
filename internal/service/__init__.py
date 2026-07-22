@@ -23,6 +23,7 @@ from .vector_database_service import VectorDatabaseService
 from .document_service import DocumentService
 from .segment_service import SegmentService
 from .retrieval_service import RetrievalService
+from .conversation_service import ConversationService
 
 __all__ = [
     "BaseService",
@@ -41,4 +42,5 @@ __all__ = [
     "ProcessRuleService",
     "SegmentService",
     "RetrievalService",
+    "ConversationService",
 ]

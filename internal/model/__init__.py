@@ -8,6 +8,7 @@
 
 from .app import App, AppDatasetJoin
 from .api_tool import ApiTool, ApiToolProvider
+from .conversation import Conversation, Message, MessageAgentThought
 from .dataset import Dataset, Document, Segment, KeywordTable, DatasetQuery, ProcessRule
 from .upload_file import UploadFile
 
@@ -23,4 +24,7 @@ __all__ = [
     "KeywordTable",
     "DatasetQuery",
     "ProcessRule",
+    "Conversation",
+    "Message",
+    "MessageAgentThought",
 ]
