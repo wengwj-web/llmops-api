@@ -318,7 +318,21 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        human_message = "你能简单介绍下LLM吗？你知道LLM与Agent的区别"
+        from internal.code.agent.agents import FunctionCallAgent
+        from internal.code.agent.entities.agent_entity import AgentConfig
+        from langchain_openai import ChatOpenAI
+
+        agent = FunctionCallAgent(
+            AgentConfig(
+                llm=ChatOpenAI(model="glm-4-flash"),
+                preset_prompt="你是一个拥有20年经验的诗人，请根据用户提供的主题来写一首诗",
+            )
+        )
+        state = agent.run("程序员", [], "")
+        content = state["messages"][-1].content
+        return success_json({"content": content})
+
+        # human_message = "你能简单介绍下LLM吗？你知道LLM与Agent的区别"
         # ai_message = """你好，我是千问，有什么可以帮到你的？"""
         # old_summary = """人类询问AI关于LLM与Agent的概念。AI解释了它们之间的区别，并详细介绍了LLM和Agent的主要功能。\n\n当前总结:\n人类询问AI对人工智能的看法，AI认为人工智能是一股向善的力量，因为它将帮助人类发挥全部潜力。\n\n新的会话:\nHuman: 你能简单介绍下什么是LLM与Agent吗？\nAI: \n        LLM 是“会说话的大脑”，负责思考与生成。有问必答，但只能“口嗨”，无法主动调用外部系统或帮你做事（如 GPT-4、Claude）。\n\nAgent（智能体）：以 LLM 为核心，具备感知、规划、记忆和工具调用能力。给它一个目标，它能自己查资料、跑代码、发邮件并自动完成任务（如你项目中用 LangGraph 编排的系统）。\n        \n\n新的总结:\n人类询问AI对人工智能的看法，AI认为人工智能是一股向善的力量，因为它将帮助人类发挥全部潜力。接着解释了LLM和Agent的概念：LLM负责思考与生成，有问必答但无法主动调用外部系统；而Agent则具备感知、规划、记忆和工具调用能力，能自主完成任务。"""
         # summary = self.conversation_service.summary(
@@ -327,10 +341,10 @@ class AppHandler:
         # conversation_name = self.conversation_service.generate_conversation_name(
         #     human_message
         # )
-        questions = self.conversation_service.generate_suggested_questions(
-            human_message
-        )
-        return success_json({"questions": questions})
+        # questions = self.conversation_service.generate_suggested_questions(
+        #     human_message
+        # )
+        # return success_json({"questions": questions})
         # demo_task.delay(uuid.uuid4())
         # return self.api_tool_service.api_tool_invoke()
         # raise FailException("数据未找到异常")
