@@ -120,12 +120,12 @@ class Router:
         )
 
         bp.add_url_rule(
-            "/datasets/",
+            "/datasets",
             view_func=self.dateset_handler.get_datasets_with_page,
         )
 
         bp.add_url_rule(
-            "/datasets/",
+            "/datasets",
             methods=["POST"],
             view_func=self.dateset_handler.create_dataset,
         )
