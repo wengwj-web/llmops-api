@@ -1,5 +1,4 @@
 .env
 /tmp/*
 storage/*
-.idea/*
 venv/*
