@@ -28,6 +28,7 @@ from pkg.paginator import Paginator
 from pkg.sqlalchemy import SQLAlchemy
 from .base_service import BaseService
 from .retrieval_service import RetrievalService
+from flask_login import login_required
 
 
 @inject
@@ -170,6 +171,7 @@ class DatasetService(BaseService):
         # 2.调用检索服务执行检索
         lc_documents = self.retrieval_service.search_in_datasets(
             dataset_ids=[dataset_id],
+            account=account,
             **req.data,
         )
         lc_document_dict = {
