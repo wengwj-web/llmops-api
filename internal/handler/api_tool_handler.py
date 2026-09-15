@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from flask import request
+from flask_login import login_required
 from injector import inject
 
 from internal.schema.api_tool_schema import (
@@ -34,6 +35,7 @@ class ApiToolHandler:
 
     api_tool_service: ApiToolService
 
+    @login_required
     def get_api_tool_providers_with_page(self):
         """获取API工具提供者列表信息，该接口支持分页"""
         req = GetApiToolProvidersWithPageReq(request.args)
@@ -50,6 +52,7 @@ class ApiToolHandler:
             PageModel(list=resp.dump(api_tool_providers), paginator=paginator)
         )
 
+    @login_required
     def create_api_tool_provider(self):
         """创建自定义API工具"""
         req = CreateApiToolReq()
@@ -60,6 +63,7 @@ class ApiToolHandler:
 
         return success_message("创建自定义API插件成功")
 
+    @login_required
     def update_api_tool_provider(self, provider_id: UUID):
         """更新自定义API工具提供者信息"""
         req = UpdateApiToolProviderReq()
@@ -70,6 +74,7 @@ class ApiToolHandler:
 
         return success_message("更新自定义API插件成功")
 
+    @login_required
     def get_api_tool(self, provider_id: UUID, tool_name: str):
         """根据传递的provider_id+tool_name获取工具的详情信息"""
         api_tool = self.api_tool_service.get_api_tool(provider_id, tool_name)
@@ -78,6 +83,7 @@ class ApiToolHandler:
 
         return success_json(resp.dump(api_tool))
 
+    @login_required
     def get_api_tool_provider(self, provider_id: UUID):
         """根据传递的provider_id获取工具提供者的原始信息"""
         api_tool_provider = self.api_tool_service.get_api_tool_provider(provider_id)
@@ -86,12 +92,14 @@ class ApiToolHandler:
 
         return success_json(resp.dump(api_tool_provider))
 
+    @login_required
     def delete_api_tool_provider(self, provider_id: UUID):
         """根据传递的provider_id删除对应的工具提供者信息"""
         self.api_tool_service.delete_api_tool_provider(provider_id)
 
         return success_message("删除自定义API插件成功")
 
+    @login_required
     def validate_openapi_schema(self):
         """校验传递的openapi_schema字符串是否正确"""
         req = ValidateOpenAPISchemaReq()

@@ -7,8 +7,9 @@
 """
 
 import dotenv
+from flask_login import LoginManager
 from flask_migrate import Migrate
-
+from internal.middleware import Middleware
 from pkg.sqlalchemy import SQLAlchemy
 
 from .module import ExtensionModule, Injector
@@ -28,6 +29,8 @@ app = Http(
     conf=conf,
     db=injector.get(SQLAlchemy),
     migrate=injector.get(Migrate),
+    login_manager=injector.get(LoginManager),
+    middleware=injector.get(Middleware),
     router=injector.get(Router),
 )
 app.config["SECRET_KEY"] = (

@@ -13,7 +13,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.tools import BaseTool
 from langgraph.graph import MessagesState
 
-from internal.entity.app_entity import DEFAULT_APP_CONFIG
+# from internal.entity.app_entity import DEFAULT_APP_CONFIG
 from internal.entity.conversation_entity import InvokeFrom
 
 # Agent智能体系统预设提示词模板
@@ -66,10 +66,10 @@ class AgentConfig(BaseModel):
     # 智能体使用的工具列表
     tools: list[BaseTool] = Field(default_factory=list)
 
-    # 审核配置
-    review_config: dict = Field(
-        default_factory=lambda: DEFAULT_APP_CONFIG["review_config"]
-    )
+    # # 审核配置
+    # review_config: dict = Field(
+    #     default_factory=lambda: DEFAULT_APP_CONFIG["review_config"]
+    # )
 
 
 class AgentState(MessagesState):

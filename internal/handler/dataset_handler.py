@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from flask import request
+from flask_login import login_required
 from injector import inject
 
 from internal.code.file_extractor import FileExtractor
@@ -155,6 +156,7 @@ class DatasetHandler:
         self.dataset_service.delete_dataset(dataset_id)
         return success_message("删除知识库成功")
 
+    @login_required
     def get_datasets_with_page(self):
         """获取知识库分页+搜索列表数据"""
         # 1.提取query数据并校验
