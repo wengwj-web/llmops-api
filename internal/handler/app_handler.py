@@ -43,6 +43,7 @@ from internal.service import (
     EmbeddingsService,
     ConversationService,
 )
+from flask_login import login_required, current_user
 from internal.task.demo_task import demo_task
 
 
@@ -58,8 +59,9 @@ class AppHandler:
     vector_database_service: VectorDatabaseService
     conversation_service: ConversationService
 
+    @login_required
     def create_app(self):
-        app = self.app_service.create_app()
+        app = self.app_service.create_app(current_user)
         return success_message(f"应用已经创建成功, id={app.id}")
 
     def get_app(self, id: uuid.UUID):
