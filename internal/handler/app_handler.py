@@ -125,9 +125,7 @@ class AppHandler:
             def chatbot(state: MessagesState) -> MessagesState:
                 """聊天机器人节点"""
                 # 3.2.1 创建LLM大语言模型
-                llm = ChatOpenAI(model="qwen2.5:1.5b", temperature=0.7).bind_tools(
-                    tools
-                )
+                llm = ChatOpenAI(model="glm-4-flash", temperature=0.7).bind_tools(tools)
 
                 # 3.2.2 调用stream()函数获取流式输出内容，并判断生成内容是文本还是工具调用参数
                 is_first_chunk = True
