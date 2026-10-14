@@ -6,7 +6,7 @@
 @File : __init__.py.py
 """
 
-from .app import App, AppDatasetJoin
+from .app import App, AppDatasetJoin, AppConfig, AppConfigVersion
 from .api_tool import ApiTool, ApiToolProvider
 from .conversation import Conversation, Message, MessageAgentThought
 from .dataset import Dataset, Document, Segment, KeywordTable, DatasetQuery, ProcessRule
@@ -16,6 +16,8 @@ from .account import Account, AccountOAuth
 __all__ = [
     "App",
     "AppDatasetJoin",
+    "AppConfig",
+    "AppConfigVersion",
     "ApiTool",
     "ApiToolProvider",
     "UploadFile",
