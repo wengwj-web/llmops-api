@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from flask_login import login_required, current_user
 from injector import inject
 
-from internal.service import AppService
+from internal.service import AppService, RetrievalService
 from internal.schema.app_schema import (
     CreateAppReq,
     GetAppResp,
@@ -37,6 +37,7 @@ class AppHandler:
     """应用控制器"""
 
     app_service: AppService
+    retrieval_service: RetrievalService
 
     @login_required
     def create_app(self):
@@ -151,4 +152,23 @@ class AppHandler:
 
     @login_required
     def ping(self):
-        pass
+        from internal.entity.dataset_entity import RetrievalStrategy, RetrievalSource
+
+        dataset_retrieval = self.retrieval_service.create_langchain_tool_from_search(
+            dataset_ids=[
+                "c1606cd6-3f74-46fe-b62e-567f4f868b1e",
+                "719a678a-93b1-4ed4-9de7-f625f7850522",
+            ],
+            account=current_user,
+            retrieval_strategy=RetrievalStrategy.SEMANTIC,
+            k=10,
+            score=0.5,
+            retrival_source=RetrievalSource.DEBUGGER,
+        )
+        print("工具名称：", dataset_retrieval.name)
+        print("工具描述：", dataset_retrieval.description)
+        print("工具参数：", dataset_retrieval.args)
+
+        content = dataset_retrieval.invoke({"query": "能简单介绍下什么是LLMOps吗?"})
+
+        return success_json({"content": content})
