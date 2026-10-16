@@ -21,6 +21,7 @@ from internal.schema.app_schema import (
     GetPublishHistoriesWithPageResp,
     FallbackHistoryToDraftReq,
     UpdateDebugConversationSummaryReq,
+    DebugChatReq,
 )
 from pkg.response import (
     validate_error_json,
@@ -151,24 +152,18 @@ class AppHandler:
         return success_message("清空应用调试会话记录成功")
 
     @login_required
+    def debug_chat(self, app_id: UUID):
+        """根据传递的应用id+query，发起调试对话"""
+        # 1.提取数据并校验数据
+        req = DebugChatReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        # 2.调用服务发起会话调试
+        response = self.app_service.debug_chat(app_id, req.query.data, current_user)
+
+        return compact_generate_response(response)
+
+    @login_required
     def ping(self):
-        from internal.entity.dataset_entity import RetrievalStrategy, RetrievalSource
-
-        dataset_retrieval = self.retrieval_service.create_langchain_tool_from_search(
-            dataset_ids=[
-                "c1606cd6-3f74-46fe-b62e-567f4f868b1e",
-                "719a678a-93b1-4ed4-9de7-f625f7850522",
-            ],
-            account=current_user,
-            retrieval_strategy=RetrievalStrategy.SEMANTIC,
-            k=10,
-            score=0.5,
-            retrival_source=RetrievalSource.DEBUGGER,
-        )
-        print("工具名称：", dataset_retrieval.name)
-        print("工具描述：", dataset_retrieval.description)
-        print("工具参数：", dataset_retrieval.args)
-
-        content = dataset_retrieval.invoke({"query": "能简单介绍下什么是LLMOps吗?"})
-
-        return success_json({"content": content})
+        pass

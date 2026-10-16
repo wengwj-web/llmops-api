@@ -40,7 +40,7 @@ class RetrievalService(BaseService):
         self,
         dataset_ids: list[UUID],
         query: str,
-        account: Account,
+        account_id: UUID,
         retrieval_strategy: str = RetrievalStrategy.SEMANTIC,
         k: int = 4,
         score: float = 0,
@@ -53,7 +53,7 @@ class RetrievalService(BaseService):
             self.db.session.query(Dataset)
             .filter(
                 Dataset.id.in_(dataset_ids),
-                Dataset.account_id == account.id,
+                Dataset.account_id == account_id,
             )
             .all()
         )
@@ -103,7 +103,7 @@ class RetrievalService(BaseService):
                 source=retrival_source,
                 # todo:等待APP配置模块完成后进行调整
                 source_app_id=None,
-                created_by=account.id,
+                created_by=account_id,
             )
 
         # 5.批量更新片段的命中次数，召回次数，涵盖了构建+执行语句
@@ -126,9 +126,9 @@ class RetrievalService(BaseService):
 
     def create_langchain_tool_from_search(
         self,
-        # flask_app: Flask,
+        flask_app: Flask,
         dataset_ids: list[UUID],
-        account: Account,
+        account_id: UUID,
         retrieval_strategy: str = RetrievalStrategy.SEMANTIC,
         k: int = 4,
         score: float = 0,
@@ -145,25 +145,16 @@ class RetrievalService(BaseService):
         def dataset_retrieval(query: str) -> str:
             """如果需要搜索扩展的知识库内容，当你觉得用户的提问超过你的知识范围时，可以尝试调用该工具，输入为搜索query语句，返回数据为检索内容字符串"""
             # 1.调用search_in_datasets检索得到LangChain文档列表
-            # with flask_app.app_context():
-            #     documents = self.search_in_datasets(
-            #         dataset_ids=dataset_ids,
-            #         query=query,
-            #         account_id=account_id,
-            #         retrieval_strategy=retrieval_strategy,
-            #         k=k,
-            #         score=score,
-            #         retrival_source=retrival_source,
-            #     )
-            documents = self.search_in_datasets(
-                dataset_ids=dataset_ids,
-                query=query,
-                account=account,
-                retrieval_strategy=retrieval_strategy,
-                k=k,
-                score=score,
-                retrival_source=retrival_source,
-            )
+            with flask_app.app_context():
+                documents = self.search_in_datasets(
+                    dataset_ids=dataset_ids,
+                    query=query,
+                    account_id=account_id,
+                    retrieval_strategy=retrieval_strategy,
+                    k=k,
+                    score=score,
+                    retrival_source=retrival_source,
+                )
 
             # 2.将LangChain文档列表转换成字符串后返回
             if len(documents) == 0:
