@@ -163,6 +163,11 @@ class AppConfig(db.Model):
     text_to_speech = Column(
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )  # 文本转语音配置
+    suggested_after_answer = Column(
+        JSONB,
+        nullable=False,
+        server_default=text("'{\"enable\": true}'::jsonb"),
+    )  # 回答后生成建议问题
     review_config = Column(
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )  # 审核配置
@@ -223,6 +228,11 @@ class AppConfigVersion(db.Model):
     text_to_speech = Column(
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )  # 文本转语音配置
+    suggested_after_answer = Column(
+        JSONB,
+        nullable=False,
+        server_default=text("'{\"enable\": true}'::jsonb"),
+    )  # 回答后生成建议问题
     review_config = Column(
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )  # 审核配置

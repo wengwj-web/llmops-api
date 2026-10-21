@@ -5,17 +5,20 @@
 @Author  : thezehui@gmail.com
 @File    : app_entity.py
 """
+
 from enum import Enum
 
 
 class AppStatus(str, Enum):
     """应用状态枚举类"""
+
     DRAFT = "draft"
     PUBLISHED = "published"
 
 
 class AppConfigType(str, Enum):
     """应用配置类型枚举类"""
+
     DRAFT = "draft"
     PUBLISHED = "published"
 
@@ -55,6 +58,9 @@ DEFAULT_APP_CONFIG = {
         "enable": False,
         "voice": "echo",
         "auto_play": False,
+    },
+    "suggested_after_answer": {
+        "enable": True,
     },
     "review_config": {
         "enable": False,

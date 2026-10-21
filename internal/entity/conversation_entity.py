@@ -5,12 +5,13 @@
 @Author  : thezehui@gmail.com
 @File    : conversation_entity.py
 """
+
 from enum import Enum
 
 from langchain_core.pydantic_v1 import BaseModel, Field
 
 # 摘要汇总模板
-SUMMARIZER_TEMPLATE = """逐步总结提供的对话内容，在之前的总结基础上继续添加并返回一个新的总结。
+SUMMARIZER_TEMPLATE = """逐步总结提供的对话内容，在之前的总结基础上继续添加并返回一个新的总结，并确保新总结的长度不要超过2000个字符，必要的时候可以删除一些信息，尽可能简洁。
 
 EXAMPLE
 当前总结:
@@ -80,13 +81,18 @@ class ConversationInfo(BaseModel):
         "reasoning": "英文部分是口语化输入，主要意图是中文，所以输出语言必须是中文",
         "subject": "询问我今天的状态"
     }"""
+
     language_type: str = Field(description="用户输入语言的语言类型声明")
-    reasoning: str = Field(description="对用户输入的文本进行语言判断的推理过程，类型为字符串")
-    subject: str = Field(description=(
-        "对用户的输入进行简短的总结，提取输入的“意图”和“主题”，"
-        "输出语言必须和输入语言保持一致，尽可能简单明了，"
-        "尤其是用户问题针对模型本身时，可以通过适当的方式加入趣味性。"
-    ))
+    reasoning: str = Field(
+        description="对用户输入的文本进行语言判断的推理过程，类型为字符串"
+    )
+    subject: str = Field(
+        description=(
+            "对用户的输入进行简短的总结，提取输入的“意图”和“主题”，"
+            "输出语言必须和输入语言保持一致，尽可能简单明了，"
+            "尤其是用户问题针对模型本身时，可以通过适当的方式加入趣味性。"
+        )
+    )
 
 
 # 建议问题提示词模板
@@ -96,11 +102,13 @@ SUGGESTED_QUESTIONS_TEMPLATE = "请根据传递的历史信息预测人类最后
 class SuggestedQuestions(BaseModel):
     """请帮我预测人类最可能会问的三个问题，并且每个问题都保持在50个字符以内。
     生成的内容必须是指定模式的JSON格式数组: ["问题1", "问题2", "问题3"]"""
+
     questions: list[str] = Field(description="建议问题列表，类型为字符串数组")
 
 
 class InvokeFrom(str, Enum):
     """会话调用来源"""
+
     SERVICE_API = "service_api"  # 开放api服务调用
     WEB_APP = "web_app"  # web应用
     DEBUGGER = "debugger"  # 调试页面
@@ -108,6 +116,7 @@ class InvokeFrom(str, Enum):
 
 class MessageStatus(str, Enum):
     """会话状态"""
+
     NORMAL = "normal"  # 正常
     STOP = "stop"  # 停止
     ERROR = "error"  # 出错
