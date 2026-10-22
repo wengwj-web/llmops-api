@@ -5,7 +5,6 @@
 @Author  : thezehui@gmail.com
 @File    : agent_entity.py
 """
-
 from uuid import UUID
 
 from langchain_core.messages import AnyMessage
@@ -33,7 +32,7 @@ AGENT_SYSTEM_PROMPT_TEMPLATE = """你是一个高度定制的智能体应用，�
 
 5.**高效性和简洁性**
   - 保持对用户需求的精准理解和高效响应，提供简洁且有效的答案，避免冗长或无关信息；
-
+  
 <预设提示>
 {preset_prompt}
 </预设提示>
@@ -46,7 +45,6 @@ AGENT_SYSTEM_PROMPT_TEMPLATE = """你是一个高度定制的智能体应用，�
 
 class AgentConfig(BaseModel):
     """智能体配置信息，涵盖：LLM大语言模型、预设prompt、关联插件、知识库、工作流、是否开启长期记忆等内容，后期可以随时扩展"""
-
     # 代表用户的唯一标识及调用来源，默认来源是WEB_APP
     user_id: UUID
     invoke_from: InvokeFrom = InvokeFrom.WEB_APP
@@ -56,9 +54,7 @@ class AgentConfig(BaseModel):
 
     # 智能体预设提示词
     system_prompt: str = AGENT_SYSTEM_PROMPT_TEMPLATE
-    preset_prompt: str = (
-        ""  # 预设prompt，默认为空，该值由前端用户在编排的时候记录，并填充到system_prompt中
-    )
+    preset_prompt: str = ""  # 预设prompt，默认为空，该值由前端用户在编排的时候记录，并填充到system_prompt中
 
     # 智能体长期记忆是否开启
     enable_long_term_memory: bool = False  # 是否开启会话信息汇总/长期记忆
@@ -67,14 +63,11 @@ class AgentConfig(BaseModel):
     tools: list[BaseTool] = Field(default_factory=list)
 
     # 审核配置
-    review_config: dict = Field(
-        default_factory=lambda: DEFAULT_APP_CONFIG["review_config"]
-    )
+    review_config: dict = Field(default_factory=lambda: DEFAULT_APP_CONFIG["review_config"])
 
 
 class AgentState(MessagesState):
     """智能体状态类"""
-
     task_id: UUID  # 该次状态对应的任务id，每次运行时会使用独立的任务id
     iteration_count: int  # 迭代次数，默认为0
     history: list[AnyMessage]  # 短期记忆(历史记录)

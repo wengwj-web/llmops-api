@@ -6,6 +6,7 @@
 @File : app_handler.py
 """
 
+import uuid
 from uuid import UUID
 from flask import request
 from dataclasses import dataclass
@@ -194,4 +195,24 @@ class AppHandler:
 
     @login_required
     def ping(self):
-        pass
+        from internal.code.agent.agents import FunctionCallAgent
+        from internal.code.agent.entities.agent_entity import AgentConfig
+        from langchain_openai import ChatOpenAI
+        from langchain_core.messages import HumanMessage
+        from internal.code.tools.builtin_tools.providers.google import google_serper
+
+        agent = FunctionCallAgent(
+            llm=ChatOpenAI(model="glm-4-flash"),
+            agent_config=AgentConfig(
+                user_id=uuid.uuid4(),
+                tools=[google_serper()],
+            ),
+        )
+        agent_result = agent.invoke(
+            {
+                "messages": [
+                    HumanMessage("帮我授索下2024年北京半程马拉松的前3名成绩是多少")
+                ]
+            }
+        )
+        return success_json({"agent_result": agent_result.model_dump()})

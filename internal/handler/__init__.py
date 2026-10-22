@@ -18,6 +18,8 @@ from .oauth_handler import OAuthHandler
 from .account_handler import AccountHandler
 from .auth_handler import AuthHandler
 from .ai_handler import AIHandler
+from .api_key_handler import ApiKeyHandler
+from .openapi_handler import OpenAPIHandler
 
 __all__ = [
     "AppHandler",
@@ -31,5 +33,7 @@ __all__ = [
     "AccountHandler",
     "AuthHandler",
     "AIHandler",
+    "ApiKeyHandler",
+    "OpenAPIHandler",
     "ConversationBufferWindowMemory",
 ]
